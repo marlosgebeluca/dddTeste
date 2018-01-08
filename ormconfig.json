@@ -1,0 +1,17 @@
+{
+  "type": "mssql",
+  "host": "192.168.111.112\\sql2012",
+  "port": 1433,
+  "username": "sa",
+  "password": "Seguros1129!",
+  "database": "ddd_dev",
+  "entities": [
+    "src\\infra\\**\\models\\**\\*{.js,.ts}"
+  ],
+  "migrations": [
+    "src\\infra\\database\\migrations\\*.ts"
+  ],
+  "cli": {
+    "migrationsDir": "src\\infra\\database\\migrations"
+  }
+}

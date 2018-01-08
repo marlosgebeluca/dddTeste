@@ -1,0 +1,1 @@
+{"version":3,"file":"RootSchema.js","sourceRoot":"","sources":["../../../src/interfaces/graphql/RootSchema.ts"],"names":[],"mappings":";;AAAA,iDAA6C;AAC7C,mDAAgD;AAChD,mDAAgD;AAEhD;IACE,MAAM,CAAC,4BAAY,CAAC;QAClB,OAAO,EAAE,CAAC,6BAAa,EAAE,EAAE,6BAAa,EAAE,CAAC;KAC5C,CAAC,CAAC;AACL,CAAC;AAJD,kCAIC"}

@@ -1,0 +1,1 @@
+{"version":3,"file":"CnNegociosNotFoundError.js","sourceRoot":"","sources":["../../../../src/app/errors/cnNegocios/CnNegociosNotFoundError.ts"],"names":[],"mappings":";;AAAA,6DAAgD;AAEhD,6BAAqC,SAAQ,+BAAS;IAClD;QACI,KAAK,CAAC,GAAG,EAAE,wBAAwB,CAAC,CAAC;IACzC,CAAC;CACJ;AAJD,0DAIC"}

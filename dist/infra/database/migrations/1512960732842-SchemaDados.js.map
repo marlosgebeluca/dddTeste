@@ -1,0 +1,1 @@
+{"version":3,"file":"1512960732842-SchemaDados.js","sourceRoot":"","sources":["../../../../src/infra/database/migrations/1512960732842-SchemaDados.ts"],"names":[],"mappings":";;;AAEA;IAEiB,EAAE,CAAC,WAAwB;;YACpC,MAAM,WAAW,CAAC,KAAK,CAAC,sBAAsB,CAAC,CAAC;QACpD,CAAC;KAAA;IAEY,IAAI,CAAC,WAAwB;;YACtC,MAAM,WAAW,CAAC,KAAK,CAAC,oBAAoB,CAAC,CAAC;QAClD,CAAC;KAAA;CAEJ;AAVD,4DAUC"}
