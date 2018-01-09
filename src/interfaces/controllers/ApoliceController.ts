@@ -1,7 +1,9 @@
-import { JsonController, Get, Post, Put, Param, Delete, Body, QueryParams } from 'routing-controllers';
+import { JsonController, Get, Post, Put, Param, Delete, Body, QueryParams, UseAfter } from 'routing-controllers';
 import { Inject } from 'typedi';
+import { ApoliceMiddleware } from '../../app/middlewares/ApoliceMiddleware';
 
 @JsonController('/apolice')
+@UseAfter(ApoliceMiddleware)
 export class ApoliceController {
   private apoliceService: IApoliceService;
 
@@ -12,7 +14,7 @@ export class ApoliceController {
   }
 
   @Get()
-  public find( @QueryParams() params: any[]): Promise<IApolice[]> {
+  public find( @QueryParams() params: any): Promise<IApolice[]> {
     return this.apoliceService.find(params);
   }
 

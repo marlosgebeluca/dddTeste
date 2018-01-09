@@ -4,6 +4,9 @@ import { ApoliceSchema } from './ApoliceSchema';
 
 export function buildSchema(): void {
   return mergeSchemas({
-    schemas: [CalculoSchema(), ApoliceSchema()],
+    schemas: [
+      CalculoSchema(),
+      ApoliceSchema(),
+    ],
   });
 }

@@ -6,7 +6,6 @@ const class_validator_1 = require("class-validator");
 const events_1 = require("../../domain/subscribers/events");
 const EventDispatcher_1 = require("../../app/decorators/EventDispatcher");
 const Logger_1 = require("../../app/decorators/Logger");
-const EndossoNotFoundError_1 = require("../../app/errors/EndossoNotFoundError");
 let EndossoService = class EndossoService {
     constructor(endossoRepository, endossoMapper, eventDispatcher, log) {
         this.eventDispatcher = eventDispatcher;
@@ -57,7 +56,7 @@ let EndossoService = class EndossoService {
                 return this.endossoRepository.save(endosso);
             }
             else {
-                throw new EndossoNotFoundError_1.EndossoNotFoundError();
+                throw Error('NOT_FOUND');
             }
         });
     }

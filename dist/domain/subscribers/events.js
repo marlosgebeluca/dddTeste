@@ -11,6 +11,7 @@ exports.events = {
     },
     apolice: {
         created: 'onApoliceCreate',
+        notFound: 'onApoliceNotFound',
     },
     endosso: {
         created: 'onEndossoCreate',

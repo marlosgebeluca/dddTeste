@@ -1,7 +1,6 @@
 import { Service, Inject } from 'typedi';
 import { getRepository } from 'typeorm';
 import { EmDoctos } from '../../models/EmDoctos';
-import { EndossoNotFoundError } from '../../../app/errors/EndossoNotFoundError';
 
 @Service('endosso.repository')
 export class EndossoRepository implements IEndossoRepository {
@@ -14,16 +13,8 @@ export class EndossoRepository implements IEndossoRepository {
     this.endossoMapper = endossoMapper;
   }
 
-  public async find(args: Endosso[]): Promise<Endosso[]> {
+  public async find(args: any): Promise<Endosso[]> {
     const emDoctos: any = await this.dbRepository.find({
-      select: [
-        'docNumProposta',
-        'docPropApolice',
-        'cliCodigo',
-        'ramoCodigo',
-        'docApolice',
-        'docTipoMovto',
-      ],
       where: { ...args },
     });
 
@@ -37,7 +28,7 @@ export class EndossoRepository implements IEndossoRepository {
     const entidade: any = this.endossoMapper.toEntity(emDocto);
 
     if (entidade['docTipoMovto'] === 'AP') {
-      throw new EndossoNotFoundError();
+      throw new Error('NOT_FOUND');
     }
 
     return entidade;
@@ -56,7 +47,7 @@ export class EndossoRepository implements IEndossoRepository {
     const emDocto: any = await this.dbRepository.findOne({ docNumProposta });
 
     if (emDocto === undefined || emDocto.docTipoMovto === 'AP') {
-      throw new EndossoNotFoundError();
+      throw new Error('NOT_FOUND');
     }
 
     await this.dbRepository.remove(emDocto);

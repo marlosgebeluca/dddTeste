@@ -3,7 +3,6 @@ import { validate } from 'class-validator';
 import { events } from '../../domain/subscribers/events';
 import { EventDispatcher, EventDispatcherInterface } from '../../app/decorators/EventDispatcher';
 import { Logger, LoggerInterface } from '../../app/decorators/Logger';
-import { EndossoNotFoundError } from '../../app/errors/EndossoNotFoundError';
 
 @Service('endosso.service')
 export class EndossoService implements IEndossoService {
@@ -20,7 +19,7 @@ export class EndossoService implements IEndossoService {
     this.endossoMapper = endossoMapper;
   }
 
-  public async find(params: any[]): Promise<IEndosso[]> {
+  public async find(params: any): Promise<IEndosso[]> {
     this.log.info('Buscando todos os endossos');
     return this.endossoRepository.find(params);
   }
@@ -66,7 +65,7 @@ export class EndossoService implements IEndossoService {
     if (endossoAux.docNumProposta === endosso.docNumProposta) {
       return this.endossoRepository.save(endosso);
     } else {
-      throw new EndossoNotFoundError();
+      throw Error('NOT_FOUND');
     }
   }
 

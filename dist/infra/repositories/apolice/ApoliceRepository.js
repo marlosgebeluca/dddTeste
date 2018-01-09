@@ -4,7 +4,6 @@ const tslib_1 = require("tslib");
 const typedi_1 = require("typedi");
 const typeorm_1 = require("typeorm");
 const EmDoctos_1 = require("../../models/EmDoctos");
-const ApoliceNotFoundError_1 = require("../../../app/errors/ApoliceNotFoundError");
 let ApoliceRepository = class ApoliceRepository {
     constructor(apoliceMapper) {
         this.dbRepository = typeorm_1.getRepository(EmDoctos_1.EmDoctos);
@@ -13,14 +12,6 @@ let ApoliceRepository = class ApoliceRepository {
     find(args) {
         return tslib_1.__awaiter(this, void 0, void 0, function* () {
             const emDoctos = yield this.dbRepository.find({
-                select: [
-                    'docPropApolice',
-                    'docNumProposta',
-                    'cliCodigo',
-                    'ramoCodigo',
-                    'docApolice',
-                    'docTipoMovto',
-                ],
                 where: Object.assign({}, args),
             });
             return emDoctos.filter(doc => {
@@ -33,7 +24,7 @@ let ApoliceRepository = class ApoliceRepository {
             const emDocto = yield this.dbRepository.findOne({ docNumProposta });
             const entidade = this.apoliceMapper.toEntity(emDocto);
             if (!emDocto || emDocto['docTipoMovto'] !== 'AP') {
-                throw new ApoliceNotFoundError_1.ApoliceNotFoundError();
+                throw new Error('NOT_FOUND');
             }
             else {
                 entidade.endossos = yield this.findEndossos(docNumProposta);
@@ -55,7 +46,7 @@ let ApoliceRepository = class ApoliceRepository {
         return tslib_1.__awaiter(this, void 0, void 0, function* () {
             const emDocto = yield this.dbRepository.findOne({ docNumProposta });
             if (emDocto === undefined) {
-                throw new ApoliceNotFoundError_1.ApoliceNotFoundError();
+                throw new Error('NOT_FOUND');
             }
             else if (emDocto.endossos && emDocto.endossos.length) {
                 for (const endosso of emDocto.endossos) {

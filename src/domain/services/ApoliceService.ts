@@ -3,7 +3,6 @@ import { validate } from 'class-validator';
 import { events } from '../../domain/subscribers/events';
 import { EventDispatcher, EventDispatcherInterface } from '../../app/decorators/EventDispatcher';
 import { Logger, LoggerInterface } from '../../app/decorators/Logger';
-import { ApoliceNotFoundError } from '../../app/errors/ApoliceNotFoundError';
 
 @Service('apolice.service')
 export class ApoliceService implements IApoliceService {
@@ -23,7 +22,7 @@ export class ApoliceService implements IApoliceService {
     this.apoliceMapper = apoliceMapper;
   }
 
-  public async find(params: any[]): Promise<IApolice[]> {
+  public async find(params: any): Promise<IApolice[]> {
     this.log.info('Buscando todos os apólices');
     return this.apoliceRepository.find(params);
   }
@@ -70,7 +69,7 @@ export class ApoliceService implements IApoliceService {
     if (apoliceAux.docNumProposta === apolice.docNumProposta) {
       return this.apoliceRepository.save(apolice);
     } else {
-      throw new ApoliceNotFoundError();
+      throw new Error('NOT_FOUND');
     }
   }
 

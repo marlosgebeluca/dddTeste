@@ -1,7 +1,6 @@
 import { Service, Inject } from 'typedi';
 import { getRepository } from 'typeorm';
 import { EmDoctos } from '../../models/EmDoctos';
-import { ApoliceNotFoundError } from '../../../app/errors/ApoliceNotFoundError';
 
 @Service('apolice.repository')
 export class ApoliceRepository implements IApoliceRepository {
@@ -14,7 +13,7 @@ export class ApoliceRepository implements IApoliceRepository {
     this.apoliceMapper = apoliceMapper;
   }
 
-  public async find(args: IApolice[]): Promise<IApolice[]> {
+  public async find(args: any): Promise<Apolice[]> {
     const emDoctos: any = await this.dbRepository.find({
       where: { ...args },
     });
@@ -24,12 +23,12 @@ export class ApoliceRepository implements IApoliceRepository {
     }).map(this.apoliceMapper.toEntity);
   }
 
-  public async findOne(docNumProposta: number): Promise<IApolice | undefined> {
+  public async findOne(docNumProposta: number): Promise<Apolice | undefined> {
     const emDocto: any = await this.dbRepository.findOne({ docNumProposta });
     const entidade: any = this.apoliceMapper.toEntity(emDocto);
 
     if (!emDocto || emDocto['docTipoMovto'] !== 'AP') {
-      throw new ApoliceNotFoundError();
+      throw new Error('NOT_FOUND');
     } else {
       entidade.endossos = await this.findEndossos(docNumProposta);
     }
@@ -37,7 +36,7 @@ export class ApoliceRepository implements IApoliceRepository {
     return entidade;
   }
 
-  public async save(apolice: IApolice): Promise<IApolice> {
+  public async save(apolice: Apolice): Promise<Apolice> {
     const db: EmDoctos = this.apoliceMapper.toDatabase(apolice);
 
     delete db.endossos;
@@ -54,7 +53,7 @@ export class ApoliceRepository implements IApoliceRepository {
     const emDocto: any = await this.dbRepository.findOne({ docNumProposta });
 
     if (emDocto === undefined) {
-      throw new ApoliceNotFoundError();
+      throw new Error('NOT_FOUND');
     } else if (emDocto.endossos && emDocto.endossos.length) {
       for (const endosso of emDocto.endossos) {
         await this.dbRepository.remove(endosso);

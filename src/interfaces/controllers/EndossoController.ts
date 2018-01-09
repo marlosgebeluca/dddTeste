@@ -1,7 +1,9 @@
-import { JsonController, Get, Post, Put, Param, Delete, Body, QueryParams } from 'routing-controllers';
+import { JsonController, Get, Post, Put, Param, Delete, Body, QueryParams, UseAfter } from 'routing-controllers';
 import { Inject } from 'typedi';
+import { EndossoMiddleware } from '../../app/middlewares/EndossoMiddleware';
 
 @JsonController('/endosso')
+@UseAfter(EndossoMiddleware)
 export class EndossoController {
   private endossoService: IEndossoService;
 

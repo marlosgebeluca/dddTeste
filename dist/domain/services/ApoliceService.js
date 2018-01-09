@@ -6,7 +6,6 @@ const class_validator_1 = require("class-validator");
 const events_1 = require("../../domain/subscribers/events");
 const EventDispatcher_1 = require("../../app/decorators/EventDispatcher");
 const Logger_1 = require("../../app/decorators/Logger");
-const ApoliceNotFoundError_1 = require("../../app/errors/ApoliceNotFoundError");
 let ApoliceService = class ApoliceService {
     constructor(apoliceRepository, endossoService, apoliceMapper, eventDispatcher, log) {
         this.eventDispatcher = eventDispatcher;
@@ -59,7 +58,7 @@ let ApoliceService = class ApoliceService {
                 return this.apoliceRepository.save(apolice);
             }
             else {
-                throw new ApoliceNotFoundError_1.ApoliceNotFoundError();
+                throw new Error('NOT_FOUND');
             }
         });
     }

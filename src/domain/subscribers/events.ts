@@ -9,6 +9,7 @@ export const events = {
   },
   apolice: {
     created: 'onApoliceCreate',
+    notFound: 'onApoliceNotFound',
   },
   endosso: {
     created: 'onEndossoCreate',

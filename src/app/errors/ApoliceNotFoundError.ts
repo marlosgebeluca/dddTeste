@@ -1,7 +1,7 @@
 import { HttpError } from 'routing-controllers';
 
 export class ApoliceNotFoundError extends HttpError {
-    constructor() {
-        super(404, 'Apolíce não encontrado');
+    constructor(codigo: number, mensagem: string) {
+        super(codigo, mensagem);
     }
 }

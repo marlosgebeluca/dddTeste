@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const tslib_1 = require("tslib");
 const routing_controllers_1 = require("routing-controllers");
 const typedi_1 = require("typedi");
+const ApoliceMiddleware_1 = require("../../app/middlewares/ApoliceMiddleware");
 let ApoliceController = class ApoliceController {
     constructor(apoliceService) {
         this.apoliceService = apoliceService;
@@ -36,7 +37,7 @@ tslib_1.__decorate([
     routing_controllers_1.Get(),
     tslib_1.__param(0, routing_controllers_1.QueryParams()),
     tslib_1.__metadata("design:type", Function),
-    tslib_1.__metadata("design:paramtypes", [Array]),
+    tslib_1.__metadata("design:paramtypes", [Object]),
     tslib_1.__metadata("design:returntype", Promise)
 ], ApoliceController.prototype, "find", null);
 tslib_1.__decorate([
@@ -90,6 +91,7 @@ tslib_1.__decorate([
 ], ApoliceController.prototype, "findEndossos", null);
 ApoliceController = tslib_1.__decorate([
     routing_controllers_1.JsonController('/apolice'),
+    routing_controllers_1.UseAfter(ApoliceMiddleware_1.ApoliceMiddleware),
     tslib_1.__param(0, typedi_1.Inject('apolice.service')),
     tslib_1.__metadata("design:paramtypes", [Object])
 ], ApoliceController);

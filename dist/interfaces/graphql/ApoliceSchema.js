@@ -6,8 +6,10 @@ const graphql_tools_1 = require("graphql-tools");
 const graphql_subscriptions_1 = require("graphql-subscriptions");
 const DateTime_1 = require("./types/DateTime");
 const ApoliceService_1 = require("../../domain/services/ApoliceService");
+const EndossoService_1 = require("../../domain/services/EndossoService");
 function ApoliceSchema() {
-    const service = typedi_1.Container.get(ApoliceService_1.ApoliceService);
+    const apoliceService = typedi_1.Container.get(ApoliceService_1.ApoliceService);
+    const endossoService = typedi_1.Container.get(EndossoService_1.EndossoService);
     const typeDefs = `
     scalar DateTime
 
@@ -20,26 +22,38 @@ function ApoliceSchema() {
     type Query {
       apolice(docNumProposta: ID!): Apolice
       apolices: [Apolice]
+      endosso(docNumProposta: ID!): Endosso
+      endossos: [Endosso]
     }
 
     type Subscription {
       novoApolice: Apolice
       apoliceAlterado: Apolice
+      novoEndosso: Endosso
+      endossoAlterado: Endosso
     }
 
     type Mutation {
       criarApolice(input: ApoliceObj): Apolice
       editarApolice(docNumProposta: ID, input: ApoliceObj): Apolice
       excluirApolice(docNumProposta: Int): Boolean
+      criarEndosso(input: EndossoObj): Endosso
+      editarEndosso(docNumProposta: ID, input: EndossoObj): Endosso
+      excluirEndosso(docNumProposta: Int): Boolean
     }
 
     input ApoliceObj {
       apolice: ApoliceInput
+      endosso: EndossoInput
+    }
+
+    input EndossoObj {
+      endosso: EndossoInput
     }
 
     input ApoliceInput {
       docNumProposta: ID
-      endossos: EndossoInput
+      endossos: [EndossoInput]
       cliCodigo: Int
       ciaCodigo: Int
       ramoCodigo: Int
@@ -131,7 +145,7 @@ function ApoliceSchema() {
 
     type Apolice {
       docNumProposta: ID
-      endossos: Endosso
+      endossos: [Endosso]
       cliCodigo: Int
       ciaCodigo: Int
       ramoCodigo: Int
@@ -221,23 +235,17 @@ function ApoliceSchema() {
       numSequencia: Int
     }
 
-    input EndossoObj {
-      endosso: EndossoInput
-    }
-
     input EndossoInput {
       docNumProposta: ID
-      docNumProposta: Int
       docTipoMovto: String
       docPropApolice: Int
       numeroEndosso: String
       docEndosso2: String
       flgProbEndosso: String
-      cliCodigo: Int
       ciaCodigo: Int
       ramoCodigo: Int
       ptoCodigo: Int
-      docApolice: String
+      docEndosso: String
       docDataProposta: DateTime
       docDataEmissao: DateTime
       docDataEntrada: DateTime
@@ -279,9 +287,8 @@ function ApoliceSchema() {
       rrepCodigo: Int
       docMesBaseRenovacao: String
       docContaDebito: String
-      docTipoApolice: String
+      docTipoEndosso: String
       docPremioServicoAdic: Int
-      docApolice2: String
       docPrimeiraParcela: Int
       tpMovCodigo: Int
       bcoCodigoDebito: String
@@ -329,11 +336,10 @@ function ApoliceSchema() {
       numeroEndosso: String
       docEndosso2: String
       flgProbEndosso: String
-      cliCodigo: Int
       ciaCodigo: Int
       ramoCodigo: Int
       ptoCodigo: Int
-      docApolice: String
+      docEndosso: String
       docDataProposta: DateTime
       docDataEmissao: DateTime
       docDataEntrada: DateTime
@@ -375,9 +381,8 @@ function ApoliceSchema() {
       rrepCodigo: Int
       docMesBaseRenovacao: String
       docContaDebito: String
-      docTipoApolice: String
+      docTipoEndosso: String
       docPremioServicoAdic: Int
-      docApolice2: String
       docPrimeiraParcela: Int
       tpMovCodigo: Int
       bcoCodigoDebito: String
@@ -429,28 +434,61 @@ function ApoliceSchema() {
             apoliceAlterado: {
                 subscribe: () => pubSub.asyncIterator('apoliceAlterado'),
             },
+            novoEndosso: {
+                subscribe: () => pubSub.asyncIterator('novoEndosso'),
+            },
+            endossoAlterado: {
+                subscribe: () => pubSub.asyncIterator('endossoAlterado'),
+            },
         },
         Query: {
-            apolices: (obj, args, ctx) => tslib_1.__awaiter(this, void 0, void 0, function* () {
-                return yield service.find([]);
+            apolices: (obj, args, ctx, info) => tslib_1.__awaiter(this, void 0, void 0, function* () {
+                return yield apoliceService.find([]);
             }),
-            apolice: (obj, args, ctx) => tslib_1.__awaiter(this, void 0, void 0, function* () {
-                return yield service.findOne(args.docNumProposta);
+            apolice: (obj, args, ctx, info) => tslib_1.__awaiter(this, void 0, void 0, function* () {
+                const apolice = yield apoliceService.findOne(args.docNumProposta);
+                // verificar se está requisitando endosso
+                const buscaEndosso = info.fieldNodes[0].selectionSet.selections.filter(sel => {
+                    return sel.name.value === 'endossos';
+                });
+                if (buscaEndosso.length && apolice) {
+                    apolice.endossos = yield endossoService.find({ docPropApolice: args.docNumProposta });
+                }
+                return apolice;
+            }),
+            endossos: (obj, args, ctx, info) => tslib_1.__awaiter(this, void 0, void 0, function* () {
+                return yield endossoService.find([]);
+            }),
+            endosso: (obj, args, ctx, info) => tslib_1.__awaiter(this, void 0, void 0, function* () {
+                return yield endossoService.findOne(args.docNumProposta);
             }),
         },
         Mutation: {
             criarApolice: (obj, { input }, ctx) => tslib_1.__awaiter(this, void 0, void 0, function* () {
-                const novoApolice = yield service.create(input.apolice);
+                const novoApolice = yield apoliceService.create(input.apolice);
                 pubSub.publish('novoApolice', { novoApolice });
                 return novoApolice;
             }),
             editarApolice: (obj, { docNumProposta, input }, ctx) => tslib_1.__awaiter(this, void 0, void 0, function* () {
-                const apoliceAlterado = yield service.update(+docNumProposta, input.apolice);
+                const apoliceAlterado = yield apoliceService.update(+docNumProposta, input.apolice);
                 pubSub.publish('apoliceAlterado', { apoliceAlterado });
                 return apoliceAlterado;
             }),
             excluirApolice: (obj, { docNumProposta }, ctx) => tslib_1.__awaiter(this, void 0, void 0, function* () {
-                return yield service.delete(docNumProposta);
+                return yield apoliceService.delete(docNumProposta);
+            }),
+            criarEndosso: (obj, { input }, ctx) => tslib_1.__awaiter(this, void 0, void 0, function* () {
+                const novoEndosso = yield endossoService.create(input.endosso);
+                pubSub.publish('novoEndosso', { novoEndosso });
+                return novoEndosso;
+            }),
+            editarEndosso: (obj, { docNumProposta, input }, ctx) => tslib_1.__awaiter(this, void 0, void 0, function* () {
+                const endossoAlterado = yield endossoService.update(+docNumProposta, input.endosso);
+                pubSub.publish('endossoAlterado', { endossoAlterado });
+                return endossoAlterado;
+            }),
+            excluirEndosso: (obj, { docNumProposta }, ctx) => tslib_1.__awaiter(this, void 0, void 0, function* () {
+                return yield endossoService.delete(docNumProposta);
             }),
         },
     };

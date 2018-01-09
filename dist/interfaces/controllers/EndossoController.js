@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const tslib_1 = require("tslib");
 const routing_controllers_1 = require("routing-controllers");
 const typedi_1 = require("typedi");
+const EndossoMiddleware_1 = require("../../app/middlewares/EndossoMiddleware");
 let EndossoController = class EndossoController {
     constructor(endossoService) {
         this.endossoService = endossoService;
@@ -60,6 +61,7 @@ tslib_1.__decorate([
 ], EndossoController.prototype, "delete", null);
 EndossoController = tslib_1.__decorate([
     routing_controllers_1.JsonController('/endosso'),
+    routing_controllers_1.UseAfter(EndossoMiddleware_1.EndossoMiddleware),
     tslib_1.__param(0, typedi_1.Inject('endosso.service')),
     tslib_1.__metadata("design:paramtypes", [Object])
 ], EndossoController);
