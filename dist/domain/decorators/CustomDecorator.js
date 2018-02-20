@@ -1,0 +1,24 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var Label_1 = require("./Label");
+exports.Label = Label_1.Label;
+exports.getLabel = Label_1.getLabel;
+var TamanhoX_1 = require("./TamanhoX");
+exports.TamanhoX = TamanhoX_1.TamanhoX;
+exports.getTamanhoX = TamanhoX_1.getTamanhoX;
+var TamanhoY_1 = require("./TamanhoY");
+exports.TamanhoY = TamanhoY_1.TamanhoY;
+exports.getTamanhoY = TamanhoY_1.getTamanhoY;
+var Hide_1 = require("./Hide");
+exports.Hide = Hide_1.Hide;
+exports.getHide = Hide_1.getHide;
+var Tipocampo_1 = require("./Tipocampo");
+exports.TipoCampo = Tipocampo_1.TipoCampo;
+exports.getTipoCampo = Tipocampo_1.getTipoCampo;
+var CampoPersonalizado_1 = require("./CampoPersonalizado");
+exports.CampoPersonalizado = CampoPersonalizado_1.CampoPersonalizado;
+exports.getCampoPersonalizado = CampoPersonalizado_1.getCampoPersonalizado;
+var ApareceRelacao_1 = require("./ApareceRelacao");
+exports.ApareceRelacao = ApareceRelacao_1.ApareceRelacao;
+exports.getApareceRelacao = ApareceRelacao_1.getApareceRelacao;
+//# sourceMappingURL=CustomDecorator.js.map

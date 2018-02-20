@@ -1,4 +1,4 @@
-import { JsonController, Get, Post, Put, Param, Delete, Body, QueryParams, UseAfter } from 'routing-controllers';
+import { JsonController, Get, Post, Put, Param, Delete, Body, QueryParams, UseAfter, HeaderParam } from 'routing-controllers';
 import { Inject } from 'typedi';
 import { ApoliceMiddleware } from '../../app/middlewares/ApoliceMiddleware';
 
@@ -14,23 +14,23 @@ export class ApoliceController {
   }
 
   @Get()
-  public find( @QueryParams() params: any): Promise<IApolice[]> {
-    return this.apoliceService.find(params);
+  public find(@HeaderParam('gerarJson') gerarJson: boolean, @QueryParams() params: any): Promise<IApolice[]> {
+    return this.apoliceService.find(params, gerarJson);
   }
 
   @Get('/:docNumProposta')
-  public one( @Param('docNumProposta') docNumProposta: number): Promise<IApolice | undefined> {
-    return this.apoliceService.findOne(docNumProposta);
+  public one(@HeaderParam('gerarJson') gerarJson: boolean, @Param('docNumProposta') docNumProposta: number): Promise<IApolice | undefined> {
+    return this.apoliceService.findOne(docNumProposta, gerarJson);
   }
 
   @Post()
-  public create( @Body() apolice: IApolice): Promise<IApolice> {
-    return this.apoliceService.create(apolice);
+  public create(@HeaderParam('gerarJson') gerarJson: boolean, @Body() apolice: IApolice): Promise<IApolice> {
+    return this.apoliceService.create(apolice, gerarJson);
   }
 
   @Put('/:docNumProposta')
-  public update( @Param('docNumProposta') docNumProposta: number, @Body() apolice: IApolice): Promise<IApolice> {
-    return this.apoliceService.update(docNumProposta, apolice);
+  public update(@HeaderParam('gerarJson') gerarJson: boolean, @Param('docNumProposta') docNumProposta: number, @Body() apolice: IApolice): Promise<IApolice> {
+    return this.apoliceService.update(docNumProposta, apolice, gerarJson);
   }
 
   @Delete('/:docNumProposta')

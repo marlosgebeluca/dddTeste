@@ -3,15 +3,15 @@ import * as express from 'express';
 import { env } from '../core/env';
 import { ApoliceStatus } from '../../cross-infra/enums/ApoliceStatus';
 import { ApoliceNotFoundError } from '../../app/errors/ApoliceNotFoundError';
-// import { Logger, LoggerInterface } from '../decorators/Logger';
+import { Logger, LoggerInterface } from '../decorators/Logger';
 
 @Middleware({ type: 'after' })
 export class ApoliceMiddleware implements ExpressErrorMiddlewareInterface {
   public isProduction = env.isProduction;
 
-  // constructor(
-  //   @Logger(__filename) private log: LoggerInterface
-  // ) { }
+  constructor(
+    @Logger(__filename) private log: LoggerInterface
+  ) { }
 
   public error(error: ApoliceNotFoundError, req: express.Request, res: express.Response, next: express.NextFunction): void {
 
@@ -27,11 +27,11 @@ export class ApoliceMiddleware implements ExpressErrorMiddlewareInterface {
       });
     }
 
-    // if (this.isProduction) {
-    //   this.log.error(error.name, error.message);
-    // } else {
-    //   this.log.error(error.name, error.stack);
-    // }
+    if (this.isProduction) {
+      this.log.error(error.name, error.message);
+    } else {
+      this.log.error(error.name, error.stack);
+    }
 
   }
 

@@ -13,6 +13,7 @@ export const events = {
   },
   endosso: {
     created: 'onEndossoCreate',
+    notFound: 'onEndossoNotFound',
   },
   cliente: {
     created: 'onClienteCreate',

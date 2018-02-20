@@ -8,17 +8,17 @@ let ApoliceController = class ApoliceController {
     constructor(apoliceService) {
         this.apoliceService = apoliceService;
     }
-    find(params) {
-        return this.apoliceService.find(params);
+    find(gerarJson, params) {
+        return this.apoliceService.find(params, gerarJson);
     }
-    one(docNumProposta) {
-        return this.apoliceService.findOne(docNumProposta);
+    one(gerarJson, docNumProposta) {
+        return this.apoliceService.findOne(docNumProposta, gerarJson);
     }
-    create(apolice) {
-        return this.apoliceService.create(apolice);
+    create(gerarJson, apolice) {
+        return this.apoliceService.create(apolice, gerarJson);
     }
-    update(docNumProposta, apolice) {
-        return this.apoliceService.update(docNumProposta, apolice);
+    update(gerarJson, docNumProposta, apolice) {
+        return this.apoliceService.update(docNumProposta, apolice, gerarJson);
     }
     delete(docNumProposta) {
         return this.apoliceService.delete(docNumProposta);
@@ -35,30 +35,30 @@ let ApoliceController = class ApoliceController {
 };
 tslib_1.__decorate([
     routing_controllers_1.Get(),
-    tslib_1.__param(0, routing_controllers_1.QueryParams()),
+    tslib_1.__param(0, routing_controllers_1.HeaderParam('gerarJson')), tslib_1.__param(1, routing_controllers_1.QueryParams()),
     tslib_1.__metadata("design:type", Function),
-    tslib_1.__metadata("design:paramtypes", [Object]),
+    tslib_1.__metadata("design:paramtypes", [Boolean, Object]),
     tslib_1.__metadata("design:returntype", Promise)
 ], ApoliceController.prototype, "find", null);
 tslib_1.__decorate([
     routing_controllers_1.Get('/:docNumProposta'),
-    tslib_1.__param(0, routing_controllers_1.Param('docNumProposta')),
+    tslib_1.__param(0, routing_controllers_1.HeaderParam('gerarJson')), tslib_1.__param(1, routing_controllers_1.Param('docNumProposta')),
     tslib_1.__metadata("design:type", Function),
-    tslib_1.__metadata("design:paramtypes", [Number]),
+    tslib_1.__metadata("design:paramtypes", [Boolean, Number]),
     tslib_1.__metadata("design:returntype", Promise)
 ], ApoliceController.prototype, "one", null);
 tslib_1.__decorate([
     routing_controllers_1.Post(),
-    tslib_1.__param(0, routing_controllers_1.Body()),
+    tslib_1.__param(0, routing_controllers_1.HeaderParam('gerarJson')), tslib_1.__param(1, routing_controllers_1.Body()),
     tslib_1.__metadata("design:type", Function),
-    tslib_1.__metadata("design:paramtypes", [Object]),
+    tslib_1.__metadata("design:paramtypes", [Boolean, Object]),
     tslib_1.__metadata("design:returntype", Promise)
 ], ApoliceController.prototype, "create", null);
 tslib_1.__decorate([
     routing_controllers_1.Put('/:docNumProposta'),
-    tslib_1.__param(0, routing_controllers_1.Param('docNumProposta')), tslib_1.__param(1, routing_controllers_1.Body()),
+    tslib_1.__param(0, routing_controllers_1.HeaderParam('gerarJson')), tslib_1.__param(1, routing_controllers_1.Param('docNumProposta')), tslib_1.__param(2, routing_controllers_1.Body()),
     tslib_1.__metadata("design:type", Function),
-    tslib_1.__metadata("design:paramtypes", [Number, Object]),
+    tslib_1.__metadata("design:paramtypes", [Boolean, Number, Object]),
     tslib_1.__metadata("design:returntype", Promise)
 ], ApoliceController.prototype, "update", null);
 tslib_1.__decorate([

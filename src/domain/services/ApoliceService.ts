@@ -3,36 +3,57 @@ import { validate } from 'class-validator';
 import { events } from '../../domain/subscribers/events';
 import { EventDispatcher, EventDispatcherInterface } from '../../app/decorators/EventDispatcher';
 import { Logger, LoggerInterface } from '../../app/decorators/Logger';
+import { GerarJsonService } from './GerarJsonService';
 
 @Service('apolice.service')
 export class ApoliceService implements IApoliceService {
   private apoliceRepository: IApoliceRepository;
   private endossoService: IEndossoService;
   private apoliceMapper: IMapper;
+  private jsonService: GerarJsonService;
 
   constructor(
     @Inject('apolice.repository') apoliceRepository: IApoliceRepository,
     @Inject('endosso.service') endossoService: IEndossoService,
     @Inject('apolice.mapper') apoliceMapper: IMapper,
+    @Inject('gerarJson.service') jsonService: GerarJsonService,
     @EventDispatcher() private eventDispatcher: EventDispatcherInterface,
     @Logger(__filename) private log: LoggerInterface
   ) {
     this.apoliceRepository = apoliceRepository;
     this.endossoService = endossoService;
     this.apoliceMapper = apoliceMapper;
+    this.jsonService = jsonService;
   }
 
-  public async find(params: any): Promise<IApolice[]> {
+  public async find(params: any, gerarJson?: boolean): Promise<IApolice[]> {
     this.log.info('Buscando todos os apólices');
-    return this.apoliceRepository.find(params);
+    const apolices = await this.apoliceRepository.find(params);
+
+    if (gerarJson) {
+      this.log.info('Gerando Json Apolice');
+      for (const key of Object.keys(apolices)) {
+        const apolice = apolices[key];
+        apolices[key] = await this.jsonService.gerar(apolice, true);
+      }
+    }
+
+    return apolices;
   }
 
-  public async findOne(docNumProposta: number): Promise<IApolice | undefined> {
+  public async findOne(docNumProposta: number, gerarJson?: boolean): Promise<IApolice | undefined> {
     this.log.info(`Buscando apólice ${docNumProposta}`);
-    return this.apoliceRepository.findOne(docNumProposta);
+    let apolice = await this.apoliceRepository.findOne(docNumProposta);
+
+    if (gerarJson) {
+      this.log.info('Gerando Json Apolice');
+      apolice = await this.jsonService.gerar(apolice);
+    }
+
+    return apolice;
   }
 
-  public async create(apolice: IApolice): Promise<IApolice> {
+  public async create(apolice: IApolice, gerarJson?: boolean): Promise<IApolice> {
     this.log.info('Criando novo apólice');
 
     apolice = this.apoliceMapper.toClass(apolice);
@@ -48,10 +69,17 @@ export class ApoliceService implements IApoliceService {
     novoApolice.docPropApolice = novoApolice.docNumProposta;
     this.eventDispatcher.dispatch(events.apolice.created, novoApolice);
 
-    return this.apoliceRepository.save(novoApolice);
+    apolice = await this.apoliceRepository.save(novoApolice);
+
+    if (gerarJson) {
+      this.log.info('Gerando Json Apolice');
+      apolice = await this.jsonService.gerar(apolice);
+    }
+
+    return apolice;
   }
 
-  public async update(docNumProposta: number, apolice: IApolice): Promise<IApolice> {
+  public async update(docNumProposta: number, apolice: IApolice, gerarJson?: boolean): Promise<IApolice> {
     this.log.info(`Atualizando apólice ${docNumProposta}`);
     apolice.docNumProposta = docNumProposta;
 
@@ -67,7 +95,14 @@ export class ApoliceService implements IApoliceService {
     const apoliceAux = await this.apoliceRepository.findOne(docNumProposta);
 
     if (apoliceAux.docNumProposta === apolice.docNumProposta) {
-      return this.apoliceRepository.save(apolice);
+      apolice = await this.apoliceRepository.save(apolice);
+
+      if (gerarJson) {
+        this.log.info('Gerando Json Apolice');
+        apolice = await this.jsonService.gerar(apolice);
+      }
+
+      return apolice;
     } else {
       throw new Error('NOT_FOUND');
     }

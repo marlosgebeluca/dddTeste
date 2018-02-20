@@ -6,27 +6,44 @@ const class_validator_1 = require("class-validator");
 const events_1 = require("../../domain/subscribers/events");
 const EventDispatcher_1 = require("../../app/decorators/EventDispatcher");
 const Logger_1 = require("../../app/decorators/Logger");
+const GerarJsonService_1 = require("./GerarJsonService");
 let ApoliceService = class ApoliceService {
-    constructor(apoliceRepository, endossoService, apoliceMapper, eventDispatcher, log) {
+    constructor(apoliceRepository, endossoService, apoliceMapper, jsonService, eventDispatcher, log) {
         this.eventDispatcher = eventDispatcher;
         this.log = log;
         this.apoliceRepository = apoliceRepository;
         this.endossoService = endossoService;
         this.apoliceMapper = apoliceMapper;
+        this.jsonService = jsonService;
     }
-    find(params) {
+    find(params, gerarJson) {
         return tslib_1.__awaiter(this, void 0, void 0, function* () {
             this.log.info('Buscando todos os apólices');
-            return this.apoliceRepository.find(params);
+            const apolices = yield this.apoliceRepository.find(params);
+            if (gerarJson) {
+                this.log.info('Gerando Json Apolice');
+                for (const key of Object.keys(apolices)) {
+                    const apolice = apolices[key];
+                    apolices[key] = yield this.jsonService.gerar(apolice, true);
+                }
+            }
+            // Bom dia Almir, sobre a pesquisa do typescript,
+            // o exemplo que o Marco solicitou que era colocar os decorators personalizados e gerar um Json de retorno está concluído para os métodos
+            return apolices;
         });
     }
-    findOne(docNumProposta) {
+    findOne(docNumProposta, gerarJson) {
         return tslib_1.__awaiter(this, void 0, void 0, function* () {
             this.log.info(`Buscando apólice ${docNumProposta}`);
-            return this.apoliceRepository.findOne(docNumProposta);
+            let apolice = yield this.apoliceRepository.findOne(docNumProposta);
+            if (gerarJson) {
+                this.log.info('Gerando Json Apolice');
+                apolice = yield this.jsonService.gerar(apolice);
+            }
+            return apolice;
         });
     }
-    create(apolice) {
+    create(apolice, gerarJson) {
         return tslib_1.__awaiter(this, void 0, void 0, function* () {
             this.log.info('Criando novo apólice');
             apolice = this.apoliceMapper.toClass(apolice);
@@ -39,10 +56,15 @@ let ApoliceService = class ApoliceService {
             const novoApolice = yield this.apoliceRepository.save(apolice);
             novoApolice.docPropApolice = novoApolice.docNumProposta;
             this.eventDispatcher.dispatch(events_1.events.apolice.created, novoApolice);
-            return this.apoliceRepository.save(novoApolice);
+            apolice = yield this.apoliceRepository.save(novoApolice);
+            if (gerarJson) {
+                this.log.info('Gerando Json Apolice');
+                apolice = yield this.jsonService.gerar(apolice);
+            }
+            return apolice;
         });
     }
-    update(docNumProposta, apolice) {
+    update(docNumProposta, apolice, gerarJson) {
         return tslib_1.__awaiter(this, void 0, void 0, function* () {
             this.log.info(`Atualizando apólice ${docNumProposta}`);
             apolice.docNumProposta = docNumProposta;
@@ -55,7 +77,12 @@ let ApoliceService = class ApoliceService {
             }
             const apoliceAux = yield this.apoliceRepository.findOne(docNumProposta);
             if (apoliceAux.docNumProposta === apolice.docNumProposta) {
-                return this.apoliceRepository.save(apolice);
+                apolice = yield this.apoliceRepository.save(apolice);
+                if (gerarJson) {
+                    this.log.info('Gerando Json Apolice');
+                    apolice = yield this.jsonService.gerar(apolice);
+                }
+                return apolice;
             }
             else {
                 throw new Error('NOT_FOUND');
@@ -120,9 +147,11 @@ ApoliceService = tslib_1.__decorate([
     tslib_1.__param(0, typedi_1.Inject('apolice.repository')),
     tslib_1.__param(1, typedi_1.Inject('endosso.service')),
     tslib_1.__param(2, typedi_1.Inject('apolice.mapper')),
-    tslib_1.__param(3, EventDispatcher_1.EventDispatcher()),
-    tslib_1.__param(4, Logger_1.Logger(__filename)),
-    tslib_1.__metadata("design:paramtypes", [Object, Object, Object, EventDispatcher_1.EventDispatcherInterface, Object])
+    tslib_1.__param(3, typedi_1.Inject('gerarJson.service')),
+    tslib_1.__param(4, EventDispatcher_1.EventDispatcher()),
+    tslib_1.__param(5, Logger_1.Logger(__filename)),
+    tslib_1.__metadata("design:paramtypes", [Object, Object, Object, GerarJsonService_1.GerarJsonService,
+        EventDispatcher_1.EventDispatcherInterface, Object])
 ], ApoliceService);
 exports.ApoliceService = ApoliceService;
 //# sourceMappingURL=ApoliceService.js.map
